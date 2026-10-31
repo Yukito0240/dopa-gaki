@@ -1,4 +1,4 @@
-// D.O.P.A. - G.A.K.I. 記録サーバー（Google Apps Script + スプレッドシート）v1
+// D.O.P.A. - G.A.K.I. 記録サーバー（Google Apps Script + スプレッドシート）v2（bundle: 記録画面の中身を1回でまとめて返す）
 // 置き方: スプレッドシート → 拡張機能 → Apps Script に貼り付け → デプロイ → ウェブアプリ（実行: 自分 / アクセス: 全員）
 const STAGES = ['outpost', 'fortress', 'city', 'airbase', 'naval', 'horde'];
 const ONLINE_SEC = 75, CACHE_SEC = 20, TZ = 'Asia/Tokyo';
@@ -14,12 +14,14 @@ function out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setM
 function route(q) {
   try {
     if (q.uid && !/^[A-Za-z0-9-]{8,64}$/.test(String(q.uid))) return { ok: false, err: 'uid' };
-    switch (q.a) { case 'reg': return reg(q); case 'play': return play(q); case 'hb': return hb(q); case 'me': return me(q); case 'rank': return rank(q); case 'room': return room(q); case 'ping': return { ok: true }; }
+    switch (q.a) { case 'reg': return reg(q); case 'play': return play(q); case 'hb': return hb(q); case 'me': return me(q); case 'rank': return rank(q); case 'room': return room(q); case 'bundle': return bundle(q); case 'ping': return { ok: true }; }
     return { ok: false, err: 'bad_action' };
   } catch (err) { return { ok: false, err: String(err) }; }
 }
 function cleanRoom(r) { r = String(r || '本部').trim().slice(0, 16); return r || '本部'; }
 function player(uid) { return rows(sh('Players', P_HEAD), P_HEAD).find(p => p.uid === uid); }
+// load: 2つのシートを1回だけ読む
+function load() { return { ps: rows(sh('Players', P_HEAD), P_HEAD), L: rows(sh('Plays', L_HEAD), L_HEAD) }; }
 // reg: コールサイン登録（2〜12文字・英数字と日本語・重複不可。変更は1回まで）
 function reg(q) {
   const name = String(q.name || '').trim();
@@ -52,22 +54,22 @@ function online(ps, rm) { const t = Date.now() - ONLINE_SEC * 1000; return ps.fi
 // hb: 生存の合図（30秒ごと）。部屋の今の人数を返す
 function hb(q) { const rm = cleanRoom(q.room); touch(q.uid, rm); const ps = rows(sh('Players', P_HEAD), P_HEAD); const on = online(ps, rm); return { ok: true, room: rm, online: on.length, names: on.slice(0, 8) }; }
 // me: 自分の記録（プレイ数・クリア数・ステージ別）
-function me(q) {
-  const p = player(q.uid); if (!p) return { ok: true, name: null };
-  const L = rows(sh('Plays', L_HEAD), L_HEAD).filter(r => r.uid === q.uid), st = {};
+function me(q, D) {
+  D = D || load(); const p = D.ps.find(x => x.uid === q.uid); if (!p) return { ok: true, name: null };
+  const L = D.L.filter(r => r.uid === q.uid), st = {};
   STAGES.forEach(k => st[k] = { plays: 0, clears: 0, best: null, top: 0 });
   L.forEach(r => { const o = st[r.stage]; if (!o) return; o.plays++; o.top = Math.max(o.top, Number(r.score)); if (r.win === true) { o.clears++; o.best = o.best == null ? Number(r.time) : Math.min(o.best, Number(r.time)); } });
   const last = L.length ? Utilities.formatDate(new Date(L[L.length - 1].ts), TZ, 'M/d') : null;
   return { ok: true, name: p.name, room: p.room, renamed: p.renamed, plays: L.length, clears: L.filter(r => r.win === true).length, stages: st, last };
 }
 // rank: ステージ別ランキング（metric=time/score/clears、room=all か部屋名）上位20＋自分の順位
-function rank(q) {
+function rank(q, D) {
   const stage = String(q.stage), metric = ['time', 'score', 'clears'].indexOf(q.metric) >= 0 ? q.metric : 'score', rm = q.room && q.room !== 'all' ? cleanRoom(q.room) : 'all';
-  const key = ['rank', stage, metric, rm].join('|'), c = CacheService.getScriptCache(), hit = c.get(key);
+  const key = ['rank', stage, metric, rm].join('|'), c = CacheService.getScriptCache(), hit = D ? null : c.get(key);
   let list = hit ? JSON.parse(hit) : null;
   if (!list) {
-    const best = {}, ps = {}; rows(sh('Players', P_HEAD), P_HEAD).forEach(p => ps[p.uid] = p);
-    rows(sh('Plays', L_HEAD), L_HEAD).forEach(r => {
+    D = D || load(); const best = {}, ps = {}; D.ps.forEach(p => ps[p.uid] = p);
+    D.L.forEach(r => {
       if (r.stage !== stage || !ps[r.uid] || (rm !== 'all' && ps[r.uid].room !== rm)) return;
       const b = best[r.uid] || (best[r.uid] = { uid: r.uid, name: ps[r.uid].name, v: null, d: null, n: 0 }), d = Utilities.formatDate(new Date(r.ts), TZ, 'M/d');
       if (metric === 'clears') { if (r.win === true) { b.n++; b.v = b.n; b.d = d; } return; }
@@ -75,15 +77,15 @@ function rank(q) {
       if (b.v == null || Number(r.score) > b.v) { b.v = Number(r.score); b.d = d; }
     });
     list = Object.keys(best).map(k => best[k]).filter(b => b.v != null).sort((a, b) => metric === 'time' ? a.v - b.v : b.v - a.v).map(b => ({ uid: b.uid, name: b.name, v: b.v, d: b.d }));
-    c.put(key, JSON.stringify(list).slice(0, 90000), CACHE_SEC);
+    try { c.put(key, JSON.stringify(list).slice(0, 90000), CACHE_SEC); } catch (e) { }
   }
   const mi = list.findIndex(x => x.uid === q.uid);
   return { ok: true, stage, metric, room: rm, top: list.slice(0, 20).map(x => ({ name: x.name, v: x.v, d: x.d, me: x.uid === q.uid })), mine: mi >= 0 ? { rank: mi + 1, v: list[mi].v } : null, total: list.length };
 }
 // room: 部屋の集計（人数・総プレイ・ステージ別・きょうのMVP・今プレイ中）
-function room(q) {
-  const rm = cleanRoom(q.room), ps = rows(sh('Players', P_HEAD), P_HEAD), mem = ps.filter(p => p.room === rm), ids = {}; mem.forEach(p => ids[p.uid] = p.name);
-  const L = rows(sh('Plays', L_HEAD), L_HEAD).filter(r => ids[r.uid] !== undefined), st = {}, today = Utilities.formatDate(new Date(), TZ, 'yyyyMMdd'), mvp = {};
+function room(q, D) {
+  D = D || load(); const rm = cleanRoom(q.room), ps = D.ps, mem = ps.filter(p => p.room === rm), ids = {}; mem.forEach(p => ids[p.uid] = p.name);
+  const L = D.L.filter(r => ids[r.uid] !== undefined), st = {}, today = Utilities.formatDate(new Date(), TZ, 'yyyyMMdd'), mvp = {};
   STAGES.forEach(k => st[k] = { plays: 0, clears: 0, best: null, who: null });
   L.forEach(r => { const o = st[r.stage]; if (!o) return; o.plays++; const nm = ids[r.uid];
     if (r.stage === 'horde') { if (o.best == null || Number(r.score) > o.best) { o.best = Number(r.score); o.who = nm; } }
@@ -91,4 +93,10 @@ function room(q) {
     if (r.win === true) { o.clears++; if (Utilities.formatDate(new Date(r.ts), TZ, 'yyyyMMdd') === today) mvp[nm] = (mvp[nm] || 0) + 1; } });
   const top = Object.keys(mvp).sort((a, b) => mvp[b] - mvp[a])[0], on = online(ps, rm);
   return { ok: true, room: rm, members: mem.length, plays: L.length, clears: L.filter(r => r.win === true).length, stages: st, mvp: top ? { name: top, n: mvp[top] } : null, online: on.length, names: on.slice(0, 8) };
+}
+// bundle: 記録画面の中身（自分・部屋・全ステージのランキング［並べ方3種×全体/部屋］）を1回で返す（v2）
+function bundle(q) {
+  const D = load(), rm = cleanRoom(q.room), out = { ok: true, v: 2, me: me(q, D), room: room(q, D), rank: {} };
+  STAGES.forEach(st => { out.rank[st] = {}; (st === 'horde' ? ['score'] : ['time', 'score', 'clears']).forEach(m => { out.rank[st][m] = { all: rank({ uid: q.uid, stage: st, metric: m, room: 'all' }, D), room: rank({ uid: q.uid, stage: st, metric: m, room: rm }, D) }; }); });
+  return out;
 }
