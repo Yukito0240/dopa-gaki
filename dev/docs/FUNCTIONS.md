@@ -1,4 +1,4 @@
-# FUNCTIONS — コードの地図（index.html v0.7.5, 2405行。旧: 1819行。末尾1行は埋め込み音 window.SFX）
+# FUNCTIONS — コードの地図（最新 v1.0.38 の変更は「v1.0.36〜38」の節。冒頭の表は index.html v0.7.5, 2405行 時点。旧: 1819行。末尾1行は埋め込み音 window.SFX）
 新しい関数を作る前にここを確認。行番号は目安（検索は関数名で）。
 
 ## 定数・状態
@@ -221,6 +221,18 @@
 | NAVB（変更） | turnR 40・gateZ -148（港口の手前の点）・breakZ -160・mouth [40,76]・outZ -165・away -300 |
 | 海軍基地のカメラ（変更） | targetZP -58・fitHalfW 54・maxDist 290（防波堤と砲兵が両方入る） |
 | CFG.navy.acc（変更） | 0.5 m/秒²（ゆっくり加速して定速） |
+
+## v1.0.36〜38 追加・変更（最新 v1.0.38、関数 342）
+- v1.0.38 showSoundRoom（新）: サウンドルーム（タイトルの data-act=sound から。背景はタイトルのステージ、メニューBGMは止める）。G.sroomAll＝チェック「着弾音・無線なども鳴らす」
+- v1.0.38 soundDemo(wi, all)（新）: 兵器の音をその場で鳴らす（ゲームと同じ Sound.fire・mechSound・railCharge、all なら Sound.boom、VLS は incoming、空爆は radio・jet・jetWhine・bombFall・tail）。CFG.sroom（dist・hitDist・hitT・radioT・airDrop・flash）
+- v1.0.38 startFinale: 最初の組が出る時（clearT）に狙い8本をまとめて finaleTarget で決め、左右の一番外側の2機から内側へ（G.finale.waves）。組 k は alt＋k×altStep。CFG.horde.finale の alts は廃止→ altStep 6・gap 0.45（組の間隔）
+- v1.0.38 explode: 援軍の再生の基準点 G.hordeHit.p は爆撃の列（G.finale.lines）の真ん中（時刻は最初の着弾）。beginReplay: 襲来は追う爆撃機を横の距離だけで選ぶ（真ん中の列の機）
+- v1.0.38 fxScorch: 再生中（G.rp.phase==='play'）は作らない。replayNextView: FX.emit（煙の柱・燃え残り）も消す
+- v1.0.37 showOverlay: 遊び方・設定・遊び方のページ移動（data-hp）で Sound.sel。buildSettings: ⚙でも Sound.sel。CSS: 記録画面（.recs、.cs 以外）は上寄せ、名前の行（h2）は高さ30px
+- v1.0.36 NET.keep(j)（新）: bundle を覚えて端末（localStorage bt_bundle_v1）にも残す。NET.addMine(stage, rec)（新）: 送った結果を手元の「個人」へすぐ足す
+- v1.0.36 NET.init: 保存した bundle を戻す。NET.play: 返事の bundle を keep（無ければ読み直し）。NET.prefetch: keep を使う。showRecords: 裏の読み直しが失敗しても出ている記録は消さない
+- 記録サーバー Code.gs v6（新）: cacheGet / cachePut / cacheDel / bump（bundle の世代を進める）/ who（人のキャッシュ p:uid）/ liveGet / liveEdit（部屋の今の一覧 L:部屋名＝いる人 u・出撃 s・結果 r）。定数 SEEN_SEC 300・LIVE_TTL 21600・LOCK_MS 2000
+- Code.gs v6（変更）: touch（一覧へ入れ、シートの最後に見た時刻は5分に1回）・hb / start（シートを読まない）・play（結果を一覧へ、bump、返事に bundle）・bundle（20秒キャッシュ、v: 6）・online(rm)・rooms・room・reg・mkroom・join・editroom（キャッシュを捨てる。部屋を移る時は前の部屋の一覧から外す）
 
 ## v1.0.32〜35 追加・変更
 - showRoomForm(mode, o, done)（新）: 部屋を作る／部屋の設定（公開・非公開・入室コード）
