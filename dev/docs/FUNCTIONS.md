@@ -222,7 +222,14 @@
 | 海軍基地のカメラ（変更） | targetZP -58・fitHalfW 54・maxDist 290（防波堤と砲兵が両方入る） |
 | CFG.navy.acc（変更） | 0.5 m/秒²（ゆっくり加速して定速） |
 
-## v1.0.36〜38 追加・変更（最新 v1.0.38、関数 342）
+## v1.0.39 追加・変更（最新 v1.0.39、関数 343）
+- briefFit(top)（新）: ブリーフィングの間だけ camera.setViewOffset で画面を引いて上へずらし、目標・艦・敵機を説明の箱（.bbox の上端 top）より上に収める（G.briefView、G.stats.briefK＝倍率）。CFG.briefFit（m・pin・maxK）
+- showBrief: 画面合わせの後に印（mkPins）を箱の前に入れる。updateCamera: G.state==='brief' なら G.briefView を当て、それ以外は clearViewOffset
+- Sound.bombFall(dur, dist, pan, slow): 素材 whistle5（爆弾の動画の笛5本を重ねた2.6秒）を着弾の時刻に鳴り終わるよう（短ければ途中から、長ければ遅らせる）。slow=true（再生）は低く長く。CFG.sfx.fall { vol, wet, lp, slow, finK }（旧 low・n・small・rate・lead・gap は廃止）
+- CFG.mech.HOWITZER / HEAVY: 最後の金属音 eject2 → load155 / load203（152mm の装填の動画、発射から2.0秒）。Sound.loadSamples: whistle5・load155・load203 は trim しない
+- window.SFX に load155・load203・whistle5（元の mp3 は dev/assets/sfx/n_*.mp3）
+
+## v1.0.36〜38 追加・変更（関数 342）
 - v1.0.38 showSoundRoom（新）: サウンドルーム（タイトルの data-act=sound から。背景はタイトルのステージ、メニューBGMは止める）。G.sroomAll＝チェック「着弾音・無線なども鳴らす」
 - v1.0.38 soundDemo(wi, all)（新）: 兵器の音をその場で鳴らす（ゲームと同じ Sound.fire・mechSound・railCharge、all なら Sound.boom、VLS は incoming、空爆は radio・jet・jetWhine・bombFall・tail）。CFG.sroom（dist・hitDist・hitT・radioT・airDrop・flash）
 - v1.0.38 startFinale: 最初の組が出る時（clearT）に狙い8本をまとめて finaleTarget で決め、左右の一番外側の2機から内側へ（G.finale.waves）。組 k は alt＋k×altStep。CFG.horde.finale の alts は廃止→ altStep 6・gap 0.45（組の間隔）
