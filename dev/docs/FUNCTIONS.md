@@ -222,7 +222,10 @@
 | 海軍基地のカメラ（変更） | targetZP -58・fitHalfW 54・maxDist 290（防波堤と砲兵が両方入る） |
 | CFG.navy.acc（変更） | 0.5 m/秒²（ゆっくり加速して定速） |
 
-## v1.0.42 追加・変更（最新 v1.0.42、関数 347）
+## v1.0.43 変更（最新 v1.0.43、関数 347）
+- CFG.rpFall { mode: 1（B）, max: 4, vol: 0.6 }。rpFall の B: 再生範囲の 'fall' 出来事 N 件（rp.fallTot）のうち、最初から最終機まで均等に K=min(N,max) 件だけ鳴らす（rp.fallN、replayNextView で0に）。Sound.bombFall の fix.vol で音量の倍率
+
+## v1.0.42 追加・変更（関数 347）
 - rpSpeed(rp, t)（新）: 再生の時刻 t の速さ（updateReplay の式を取り出した）。rpReal(rp, a, b)（新）: 再生の時刻 a〜b にかかる実際の秒
 - rpFall(rp, dur, p)（新）: 再生中の爆弾の笛。G.rpWh＝0:A 着弾までの実際の秒に合う一定の速さ／1:B 普通の速さ／2:C 鳴らさない／3:D 速さに合わせる（v1.0.40 の動き）。CFG.rpWhistle（表示名）
 - Sound.bombFall(dur, dist, pan, fix): fix={delay, rate} で固定（followSpeed が触らない）。Sound.stopFalls()（新）: 鳴っている笛を止める（replayNextView から）
