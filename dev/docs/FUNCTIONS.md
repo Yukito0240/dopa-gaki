@@ -222,7 +222,11 @@
 | 海軍基地のカメラ（変更） | targetZP -58・fitHalfW 54・maxDist 290（防波堤と砲兵が両方入る） |
 | CFG.navy.acc（変更） | 0.5 m/秒²（ゆっくり加速して定速） |
 
-## v1.0.40 追加・変更（最新 v1.0.40、関数 344）
+## v1.0.41 変更（最新 v1.0.41、関数 344）
+- CFG.mech: HOWITZER=['ejectM119' 0.30秒 音量0.592]+['loadM119' 1.30秒 0.169]、HEAVY=['ejectM119' 0.50秒 0.774]+['loadM119b' 1.75秒 0.316]。eject1 は大砲では使わない
+- window.SFX: ejectM119（M119 の1秒動画の排出音）・loadM119（2秒動画の後半 +2.5半音）・loadM119b（同 +1半音）。trim しない一覧にも追加
+
+## v1.0.40 追加・変更（関数 344）
 - Sound.followSpeed(k)（新）: 鳴っている爆弾の笛（Sound.falls）の再生速度を今のゲームの速さに合わせる。frame から毎回（再生中は rp.sp、サウンドルームのスローは G.sroomK、ほかは G.ts）。範囲 CFG.sfx.fall.slow [0.25, 2]
 - Sound.bombFall(dur, dist, pan): dur はゲームの秒。始まりの遅れは今の速さで割る。slow 引数は廃止（再生の 'fall' 出来事も素の秒で呼ぶ）
 - airDemo(mode)（新）: サウンドルームの空爆（n=通常 s=スロー CFG.sroom.slow 0.35 f=援軍8機）。ゲームと同じ Sound.radio・jet・bombFall・boom・tail
