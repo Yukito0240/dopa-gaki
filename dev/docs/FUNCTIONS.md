@@ -222,7 +222,14 @@
 | 海軍基地のカメラ（変更） | targetZP -58・fitHalfW 54・maxDist 290（防波堤と砲兵が両方入る） |
 | CFG.navy.acc（変更） | 0.5 m/秒²（ゆっくり加速して定速） |
 
-## v1.0.39 追加・変更（最新 v1.0.39、関数 343）
+## v1.0.40 追加・変更（最新 v1.0.40、関数 344）
+- Sound.followSpeed(k)（新）: 鳴っている爆弾の笛（Sound.falls）の再生速度を今のゲームの速さに合わせる。frame から毎回（再生中は rp.sp、サウンドルームのスローは G.sroomK、ほかは G.ts）。範囲 CFG.sfx.fall.slow [0.25, 2]
+- Sound.bombFall(dur, dist, pan): dur はゲームの秒。始まりの遅れは今の速さで割る。slow 引数は廃止（再生の 'fall' 出来事も素の秒で呼ぶ）
+- airDemo(mode)（新）: サウンドルームの空爆（n=通常 s=スロー CFG.sroom.slow 0.35 f=援軍8機）。ゲームと同じ Sound.radio・jet・bombFall・boom・tail
+- CFG.mech: HOWITZER=['eject1' 0.45秒]+['loadM119' 1.3秒 音量0.513]、HEAVY=['eject1' 0.65秒]+['loadM119' 1.15秒 音量0.327]。load155・load203 は廃止
+- window.SFX: loadM119（M119 の装填の動画）、whistle5（5本×+3半音×±2.25半音×0.25秒ずれ、2.65秒）に差し替え
+
+## v1.0.39 追加・変更（関数 343）
 - briefFit(top)（新）: ブリーフィングの間だけ camera.setViewOffset で画面を引いて上へずらし、目標・艦・敵機を説明の箱（.bbox の上端 top）より上に収める（G.briefView、G.stats.briefK＝倍率）。CFG.briefFit（m・pin・maxK）
 - showBrief: 画面合わせの後に印（mkPins）を箱の前に入れる。updateCamera: G.state==='brief' なら G.briefView を当て、それ以外は clearViewOffset
 - Sound.bombFall(dur, dist, pan, slow): 素材 whistle5（爆弾の動画の笛5本を重ねた2.6秒）を着弾の時刻に鳴り終わるよう（短ければ途中から、長ければ遅らせる）。slow=true（再生）は低く長く。CFG.sfx.fall { vol, wet, lp, slow, finK }（旧 low・n・small・rate・lead・gap は廃止）
