@@ -222,7 +222,13 @@
 | 海軍基地のカメラ（変更） | targetZP -58・fitHalfW 54・maxDist 290（防波堤と砲兵が両方入る） |
 | CFG.navy.acc（変更） | 0.5 m/秒²（ゆっくり加速して定速） |
 
-## v1.0.41 変更（最新 v1.0.41、関数 344）
+## v1.0.42 追加・変更（最新 v1.0.42、関数 347）
+- rpSpeed(rp, t)（新）: 再生の時刻 t の速さ（updateReplay の式を取り出した）。rpReal(rp, a, b)（新）: 再生の時刻 a〜b にかかる実際の秒
+- rpFall(rp, dur, p)（新）: 再生中の爆弾の笛。G.rpWh＝0:A 着弾までの実際の秒に合う一定の速さ／1:B 普通の速さ／2:C 鳴らさない／3:D 速さに合わせる（v1.0.40 の動き）。CFG.rpWhistle（表示名）
+- Sound.bombFall(dur, dist, pan, fix): fix={delay, rate} で固定（followSpeed が触らない）。Sound.stopFalls()（新）: 鳴っている笛を止める（replayNextView から）
+- 再生の画面に #rpWh「笛」ボタン（押すと鳴らし方を替えて再生を最初から）。setViewBtn が表示を更新
+
+## v1.0.41 変更（関数 344）
 - CFG.mech: HOWITZER=['ejectM119' 0.30秒 音量0.592]+['loadM119' 1.30秒 0.169]、HEAVY=['ejectM119' 0.50秒 0.774]+['loadM119b' 1.75秒 0.316]。eject1 は大砲では使わない
 - window.SFX: ejectM119（M119 の1秒動画の排出音）・loadM119（2秒動画の後半 +2.5半音）・loadM119b（同 +1半音）。trim しない一覧にも追加
 
