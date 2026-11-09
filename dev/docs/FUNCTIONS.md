@@ -222,7 +222,13 @@
 | 海軍基地のカメラ（変更） | targetZP -58・fitHalfW 54・maxDist 290（防波堤と砲兵が両方入る） |
 | CFG.navy.acc（変更） | 0.5 m/秒²（ゆっくり加速して定速） |
 
-## v1.0.43 変更（最新 v1.0.43、関数 347）
+## v1.0.44 変更（最新 v1.0.44、関数 347）
+- fallPick(o, N)（新）: 爆撃機が多い時、最初の投弾から最終機までに散らした CFG.rpFall.max 本だけ笛を鳴らす（o.fallN）。updateBombers（援軍の時 G.finale）・rpFall（rp）・airDemo（援軍）で使う
+- Sound.bombFall(dur, dist, pan): いつも普通の速さ・音量×CFG.rpFall.vol（B）。fix 引数は廃止
+- 廃止: Sound.followSpeed、rpReal、再生の「笛」ボタン（#rpWh・CFG.rpWhistle・G.rpWh）。CFG.rpFall は { max, vol }
+- CFG.mech: HOWITZER の排出は 'eject1' 0.35秒（元のゲームの音を少し早め）、HEAVY の排出は 'ejectM119b' 0.45秒 音量0.584（M119 -4.5半音・速さ0.8）。window.SFX の ejectM119 は廃止、ejectM119b を追加
+
+## v1.0.43 変更（関数 347）
 - CFG.rpFall { mode: 1（B）, max: 4, vol: 0.6 }。rpFall の B: 再生範囲の 'fall' 出来事 N 件（rp.fallTot）のうち、最初から最終機まで均等に K=min(N,max) 件だけ鳴らす（rp.fallN、replayNextView で0に）。Sound.bombFall の fix.vol で音量の倍率
 
 ## v1.0.42 追加・変更（関数 347）
