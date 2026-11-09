@@ -222,7 +222,10 @@
 | 海軍基地のカメラ（変更） | targetZP -58・fitHalfW 54・maxDist 290（防波堤と砲兵が両方入る） |
 | CFG.navy.acc（変更） | 0.5 m/秒²（ゆっくり加速して定速） |
 
-## v1.0.44 変更（最新 v1.0.44、関数 347）
+## v1.0.45 変更（最新 v1.0.45、関数 347）
+- CFG.mech.HOWITZER: 'eject1' 0.30秒・'loadM119' 1.45秒
+
+## v1.0.44 変更（関数 347）
 - fallPick(o, N)（新）: 爆撃機が多い時、最初の投弾から最終機までに散らした CFG.rpFall.max 本だけ笛を鳴らす（o.fallN）。updateBombers（援軍の時 G.finale）・rpFall（rp）・airDemo（援軍）で使う
 - Sound.bombFall(dur, dist, pan): いつも普通の速さ・音量×CFG.rpFall.vol（B）。fix 引数は廃止
 - 廃止: Sound.followSpeed、rpReal、再生の「笛」ボタン（#rpWh・CFG.rpWhistle・G.rpWh）。CFG.rpFall は { max, vol }

@@ -1,5 +1,5 @@
 # HANDOFF — 引き継ぎ
-最終更新: 2026-11-09 / v1.0.44・記録サーバー v6（前の長い HANDOFF は GitHub の dev/docs/HANDOFF_archive_v1.0.35.md）
+最終更新: 2026-11-10 / v1.0.45・記録サーバー v6（前の長い HANDOFF は GitHub の dev/docs/HANDOFF_archive_v1.0.35.md）
 
 ## 現在地
 - ゲーム名「D.O.P.A. - G.A.K.I.」（Devastating Overmatch Power Against Generating Artificial Killing Intelligence／対生成型殺傷人工知能超絶破壊的圧倒火力）。旧名 BREAKTHROUGH
@@ -7,7 +7,7 @@
 - ステージ: 前哨基地・要塞・市街地・空軍基地・海軍基地・襲来（ゾンビの群れ）。兵器9種＋FEVER、クリア後のリプレイ（4視点）、メニューBGM（ユーザーの曲）、サウンドルーム（v1.0.38）
 - 公開先は2つ
   - GitHub版（本番・試験用）: https://yukito0240.github.io/dopa-gaki/ ＝ リポジトリ Yukito0240/dopa-gaki の index.html。オンライン記録あり
-  - claude.ai版: https://claude.ai/artifact/FfXunUoJ7HLc7MhpuxdxSj（版64）。CSPで外へ送れないのでオンライン記録は出ない（claude.ai の仕組みで作る案はユーザー判断で見送り）
+  - claude.ai版: https://claude.ai/artifact/FfXunUoJ7HLc7MhpuxdxSj（版65）。CSPで外へ送れないのでオンライン記録は出ない（claude.ai の仕組みで作る案はユーザー判断で見送り）
 - オンライン記録（GitHub版）: Google Apps Script＋スプレッドシート（記録サーバー v6、ユーザーのGoogleドライブ。URLは dev/server/url.txt）
   - コールサイン（端末IDにひも付け・変更1回）、個人の記録、ステージ別ランキング（タイム/スコア/クリア回数×全体/部屋）、部屋の集計、今プレイ中の人数
   - 部屋: 最初は 3TFS。公開／非公開（一覧に出ない）＋入室コード（任意、SHA-256で保存）。作った人が部屋長
@@ -15,6 +15,7 @@
   - v6（通信の軽量化）: 今いる人・出撃・結果は CacheService の部屋ごとの一覧（キー L:部屋名）だけで扱い、hb・start はシートを読まない。最後に見た時刻のシート書き込みは1人5分に1回。人の名前と部屋もキャッシュ（p:uid）。bundle は「世代＋人」で20秒キャッシュし、記録・部屋が変わると bump で全員分を古くする。play の返事に bundle
   - v1.0.36（ゲーム側）: bundle を端末（localStorage bt_bundle_v1）に残し、記録画面は開いた瞬間に前回分を出して裏で更新（読めなくても消さない）。自分の結果は送った瞬間に「個人」へ足し、play の返事の bundle をそのまま使う
 - v1.0.37: 遊び方・設定・⚙・遊び方のページ移動でも選択音。記録画面は上寄せ（個人・ランキング・部屋で見出しとタブの行が動かない）
+- v1.0.45: 155mm の排出0.30秒後・再装填1.45秒後
 - v1.0.44: 爆弾の笛はプレイ中も再生もいつも B（普通の速さ・0.6倍、援軍は散らした4本）、笛ボタンを外した、155mm の排出は元の音を0.35秒後・203mm の排出は M119 の低い音
 - v1.0.43: 再生中の笛は B（普通の速さ）を初期に、最初の投弾から最終機までに散らした4本までを0.6倍の音量で
 - v1.0.42: 再生中の爆弾の笛を見比べる「笛」ボタン（A一定・B普通・C鳴らさない・D速さに合わせる、初期はA）。襲来の最後の爆撃の再生で、笛が再生の速さに釣られて高さが揺れる件の対策
